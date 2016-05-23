@@ -1,0 +1,64 @@
+---
+title: "Investigate the Exponential Distribution in R"
+author: "jbratanov"
+date: "Monday, May 23, 2016"
+output: html_document
+---
+
+####We will investigate the exponential distribution using R and compare it with the Central Limit Theorem.  
+####The following criteria will be used for this project:
+ 1. mean of exponential distribution = 1/lambda
+ 2. standard deviation = 1/lambda
+ 3. lambda = 0.2 for simulations
+ 4. investigate distribution of 40 exponentials (will need to do 1000 simulations)
+
+### Compare sample mean to the theoretical mean of the distribution
+```{r}
+
+# simulation vars
+lambdaVal <- .2
+simCnt <- 1000
+n <- 40
+
+# set seed to 1.  Easy to remember
+set.seed(1)
+
+# Run simulation to gather data
+simMatrix <- matrix(rexp(simCnt * n, rate=lambdaVal), simCnt, n)
+simData <- rowMeans(simMatrix)
+
+# Get simulated mean
+simMean <- mean(simData)
+
+# Get theoretical mean
+theoryMean <- 1 / lambdaVal
+
+# Print mean comparison
+cat("Sample mean =", simMean, "and Theoretical mean =", theoryMean)
+```
+####The sample mean of 4.99 is very close to theoretical mean of 5.
+
+### Compare sample variance to the theoretical variance of the distribution
+```{r}
+
+# Get simulated variance
+simVar <- var(simData)
+
+# Get theoretical variance
+theoryVar <- (1/lambdaVal)^2/n
+
+# Print variance comparison
+cat("Sample variance =", simVar, "and Theoretical variance =", theoryVar)
+```
+####The sample variance of 0.6177 is very close to theoretical variance of 0.625.
+
+### Show that the distribution is approximately normal
+```{r}
+
+
+
+```
+
+
+
+
