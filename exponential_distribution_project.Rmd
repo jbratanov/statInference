@@ -28,7 +28,8 @@ set.seed(1)
 
 # Run simulation to gather data
 # use rexp for random generation of the exponential distribution
-# store the simulation data in a matrix 
+# store the simulation data in a matrix
+# NOTE TO SELF:  rowMeans is much faster than apply
 simMatrix <- matrix(rexp(simCnt * n, rate=lambdaVal), simCnt, n)
 simData <- rowMeans(simMatrix)
 
