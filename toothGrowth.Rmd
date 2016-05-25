@@ -1,0 +1,77 @@
+---
+title: Analysis of the Tooth Growth with Guinea Pigs using different delivery methods
+  of Vitamin C
+author: "jbratanov"
+date: "Monday, May 23, 2016"
+output: pdf_document
+---
+##We will perform analysis on the ToothGrowth data to see if there's any difference between delivery methods of Vitamin C.
+
+#### About the ToothGrowth data
+ 1. The response is the length of odontoblasts (teeth) in each of 10 guinea pigs at each of three dose levels of Vitamin C (0.5, 1, and 2 mg) with each of two delivery methods of orange juice (OJ) or ascorbic acid (VC).
+ 2. A data frame with 60 observations on 3 variables. 
+
+    - Tooth length 
+    - Supplement type (VC or OJ). 
+    - Dose in milligrams.  
+
+
+## 
+```{r}
+# Look at structure of data
+str(ToothGrowth)
+
+# Print a few data rows and observe
+head(ToothGrowth, 10)
+
+# Print summary of ToothGrowth dataset
+summary(ToothGrowth)
+
+# Run graph from "help" facility in R for ToothGrowth dataset
+require(graphics)
+coplot(len ~ dose | supp, data = ToothGrowth, panel = panel.smooth,
+       xlab = "ToothGrowth data: length vs dose, given type of supplement")
+```
+
+#### Initial observations using the above graph, you see data only has OJ and VC as supplements.  The dose column only has values of 0.5, 1.0 and 2.0.  This graph shows the OJ supp tooth growth starts off slower than VC with smaller doses, but as dosage increases for both supps, the VC is similar at 2.0 as OJ.
+
+## Use hypothesis test to compare tooth growth by supp and dose.
+#### hypothesis are as follows:
+
+    H0: No differences with two delivery methods (OJ or VC)
+    Ha: Delivery method that impacts the most on tooth growth
+```{r}
+
+# hmmm...  Shouldn't have done this.  Now dose is permanently a factor
+ToothGrowth$dose <- as.factor(ToothGrowth$dose)
+
+# When in doubt, assume unequal variances
+testList <- lapply(c(.5, 1, 2), function(mg)
+  {
+    t.test(data=ToothGrowth, len ~ supp, dose==mg, paired=FALSE, var.equal=FALSE)
+  })
+
+# Print out P-Values and Confidence Intervals
+cat("Dose= .5", "P-Value=", testList[[1]]$p.value,
+    "Lower Conf Interval=", testList[[1]]$conf.int[1],
+    "Upper Conf Interval=", testList[[1]]$conf.int[2])
+
+cat("Dose= 1", "P-Value=",  testList[[2]]$p.value,
+    "Lower Conf Interval=", testList[[2]]$conf.int[1],
+    "Upper Conf Interval=", testList[[2]]$conf.int[2])
+
+cat("Dose= 2", "P-Value=",  testList[[3]]$p.value,
+    "Lower Conf Interval=", testList[[3]]$conf.int[1],
+    "Upper Conf Interval=", testList[[3]]$conf.int[2])
+
+aggMean <- aggregate(ToothGrowth$len, list(ToothGrowth$supp, ToothGrowth$dose), mean)
+aggMean
+
+
+
+
+```
+####In aggregating the mean for different dosages for each supplement, OJ seems to do better at lower dosages of .5mg and 1mg.  When the dosage is given at 2mg, both supplments seem to have similar results.  The lower doses don't meet the H0 confidence level, but the higher dosage does.
+
+
+
